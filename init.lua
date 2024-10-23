@@ -1,4 +1,4 @@
--- Set <space> as the leader key
+--formal linguistic term Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
@@ -142,21 +142,31 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
-  -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
+  -- Begin custom plugins
+  {
+    'alexghergh/nvim-tmux-navigation',
+    config = function()
+      local nvim_tmux_nav = require 'nvim-tmux-navigation'
+      nvim_tmux_nav.setup {
+        disable_when_zoomed = true,
+      }
+
+      vim.keymap.set('n', '<C-h>', nvim_tmux_nav.NvimTmuxNavigateLeft)
+      vim.keymap.set('n', '<C-j>', nvim_tmux_nav.NvimTmuxNavigateDown)
+      vim.keymap.set('n', '<C-k>', nvim_tmux_nav.NvimTmuxNavigateUp)
+      vim.keymap.set('n', '<C-l>', nvim_tmux_nav.NvimTmuxNavigateRight)
+      vim.keymap.set('n', '<C-\\>', nvim_tmux_nav.NvimTmuxNavigateLastActive)
+      vim.keymap.set('n', '<C-Space>', nvim_tmux_nav.NvimTmuxNavigateNext)
+    end,
+  },
+
+  -- Begin Kickstart plugins
+
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
   -- keys can be used to configure plugin behavior/loading/etc.
-  --
-  -- Use `opts = {}` to force a plugin to be loaded.
-  --
-
-  -- Here is a more advanced example where we pass configuration
-  -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
-  --    require('gitsigns').setup({ ... })
-  --
-  -- See `:help gitsigns` to understand what the configuration keys do
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {
@@ -169,21 +179,6 @@ require('lazy').setup({
       },
     },
   },
-
-  -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
-  --
-  -- This is often very useful to both group configuration, as well as handle
-  -- lazy loading plugins that don't need to be loaded immediately at startup.
-  --
-  -- For example, in the following configuration, we use:
-  --  event = 'VimEnter'
-  --
-  -- which loads which-key before all the UI elements are loaded. Events can be
-  -- normal autocommands events (`:help autocmd-events`).
-  --
-  -- Then, because we use the `config` key, the configuration only runs
-  -- after the plugin has been loaded:
-  --  config = function() ... end
 
   { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
@@ -240,12 +235,6 @@ require('lazy').setup({
   },
 
   -- NOTE: Plugins can specify dependencies.
-  --
-  -- The dependencies are proper plugin specifications as well - anything
-  -- you do for a plugin at the top level, you can do for a dependency.
-  --
-  -- Use the `dependencies` key to specify the dependencies of a particular plugin
-
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
@@ -325,7 +314,6 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
-
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
         -- You can pass additional configuration to Telescope to change the theme, layout, etc.
@@ -743,7 +731,6 @@ require('lazy').setup({
     -- change the command in the config to whatever the name of that colorscheme is.
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    -- 'catppuccin/nvim',
     'rebelot/kanagawa.nvim',
 
     priority = 1000, -- Make sure to load this before all the other start plugins.
@@ -752,7 +739,7 @@ require('lazy').setup({
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
       -- vim.cmd.colorscheme 'catppuccin-mocha'
-      vim.cmd.colorscheme 'kanagawa-dragon';
+      vim.cmd.colorscheme 'kanagawa-dragon'
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
@@ -837,10 +824,12 @@ require('lazy').setup({
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
-  require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.neo-tree',
 
+  require 'kickstart.plugins.harpoon',
+  require 'kickstart.plugins.lualine',
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
   --
